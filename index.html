@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Bio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;600&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ffffff;
+            --secondary: #a0a0a0;
+            --bg-deep: #000000;
+            --bg-card: #050505;
+            --bg-review: #0a0a0a;
+            --text-main: #ffffff;
+            --border: rgba(255, 255, 255, 0.1);
+            --error-red: #ff4d4d;
+            --nav-bg: rgba(0, 0, 0, 0.9);
+        }
+
+        [data-theme="light"] {
+            --primary: #000000;
+            --secondary: #444444;
+            --bg-deep: #ffffff;
+            --bg-card: #f9f9f9;
+            --bg-review: #f0f0f0;
+            --text-main: #000000;
+            --border: rgba(0, 0, 0, 0.1);
+            --nav-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; scroll-behavior: smooth; transition: background 0.3s, color 0.3s; }
+        body { background-color: var(--bg-deep); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
+
+        .floating-quote { position: fixed; top: 250px; left: 5%; z-index: 3000; max-width: 250px; pointer-events: none; transition: opacity 0.6s ease, transform 0.6s ease; opacity: 1; transform: translateX(0); }
+        .floating-quote p { font-family: 'Dancing Script', cursive; font-size: 1.2rem; color: var(--primary); text-shadow: 0 0 10px rgba(128,128,128,0.2); }
+        .floating-quote span { font-size: 0.8rem; color: var(--secondary); display: block; margin-top: 5px; }
+        .fade-out { opacity: 0 !important; transform: translateX(-30px) !important; }
+
+        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .grain { position: absolute; width: 100%; height: 100%; background-image: url('https://upload.wikimedia.org/wikipedia/commons/7/76/Noise_6.png'); opacity: 0.03; pointer-events: none; }
+        
+        #particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        nav { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; padding: 1rem 8%; background: var(--nav-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); z-index: 2000; }
+        .logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; color: var(--primary); }
+        .nav-right { display: flex; align-items: center; gap: 30px; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { color: var(--secondary); text-decoration: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        #theme-toggle { background: var(--primary); color: var(--bg-deep); border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px; font-size: 0.8rem; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
+
+        .profile-section { text-align: center; margin-bottom: 4rem; position: relative; }
+        .profile-img { width: 150px; height: 150px; object-fit: cover; border: 1px solid var(--border); transition: 0.5s; cursor: pointer; border-radius: 2px; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 3.5rem; margin-bottom: 0.5rem; }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .logo { font-size: 1.4rem; }
+            .nav-links { display: none; }
+            .floating-quote { left: 2%; top: 200px; max-width: 150px; }
+            .floating-quote p { font-size: 1rem; }
+        }
+
+        .sub-title { font-size: 0.8rem; letter-spacing: 5px; text-transform: uppercase; color: var(--secondary); margin-bottom: 1.5rem; }
+
+        .social-icons { display: flex; justify-content: center; gap: 25px; margin-bottom: 2rem; }
+        .social-icons a { font-size: 1.2rem; color: var(--primary); transition: 0.3s; }
+        
+        #secret-box { display: none; margin: 20px auto; padding: 25px; background: var(--bg-card); border: 1px solid var(--border); font-size: 0.9rem; text-align: left; max-width: 500px; }
+
+        .tab-menu { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { background: transparent; border: 1px solid var(--border); color: var(--secondary); padding: 10px 20px; cursor: pointer; text-transform: uppercase; font-size: 0.7rem; }
+        .tab-btn.active { background: var(--primary); color: var(--bg-deep); border-color: var(--primary); }
+        .tab-content { background: var(--bg-card); border: 1px solid var(--border); padding: 30px; margin-bottom: 4rem; display: none; }
+        .tab-content.active { display: block; }
+
+        .tab-content ul li {
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tab-content ul li strong {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .tab-content ul li span {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+
+        .quiz-container { border: 1px solid var(--border); padding: 50px; text-align: center; margin-bottom: 4rem; background: var(--bg-card); }
+        #quizInput { background: transparent; border: none; border-bottom: 1px solid var(--secondary); color: var(--text-main); padding: 10px; width: 100%; max-width: 300px; text-align: center; outline: none; margin-bottom: 20px; }
+        .quiz-btn { background: var(--primary); color: var(--bg-deep); border: none; padding: 12px 30px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+
+        .section-header { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin: 2rem 0; }
+        .game-item { background: transparent; padding: 15px; border: 1px solid var(--border); cursor: pointer; text-align: center; font-weight: bold; font-size: 0.85rem; }
+        .game-item:hover { background: var(--primary); color: var(--bg-deep); }
+
+        .music-track-container { background: var(--bg-card); padding: 25px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .track-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .track-links { display: flex; gap: 15px; align-items: center; }
+        .track-links a { color: var(--secondary); font-size: 1.1rem; }
+        .play-btn { background: var(--primary); color: var(--bg-deep); border: none; width: 35px; height: 35px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .progress-container { height: 2px; background: var(--border); cursor: pointer; width: 100%; position: relative; }
+        .progress-bar { height: 100%; width: 0%; background: var(--primary); }
+
+        footer { text-align: center; padding: 4rem; color: var(--secondary); font-size: 0.7rem; letter-spacing: 3px; }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <audio id="bgm-player" loop></audio>
+
+    <div class="floating-quote" id="quoteBox">
+        <p>"To the edge of the world, we are the darkness."</p>
+        <span>— Ave Mujica</span>
+    </div>
+
+    <div class="bg-animation">
+        <canvas id="particle-canvas"></canvas>
+        <div class="grain"></div>
+    </div>
+
+    <nav>
+        <div class="logo">GriffonLord Bio</div>
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="#profil">Profil</a>
+                <a href="#games">Games</a>
+                <a href="#music">Playlist</a>
+            </div>
+            <button id="theme-toggle" onclick="toggleTheme()"><i class="fas fa-sun"></i></button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="profile-section" id="profil">
+            <img src="PP.jpg" alt="Profile" class="profile-img" onclick="toggleSecret()">
+            <h1>Fio Aldyth Anafiche</h1>
+            <p class="sub-title">Mahasiswa PPNP</p>
+
+            <div class="social-icons">
+                <a href="https://www.instagram.com/leodyth_/" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://myanimelist.net/profile/GriffonLord" target="_blank"><i class="fas fa-list-alt"></i></a>
+                <a href="https://open.spotify.com/user/31oyxuvqtsrexjyjucqrswlzj5ie?si=d75db0ce85234be8" target="_blank"><i class="fab fa-spotify"></i></a>
+                <a href="https://discord.com/users/881385659036729364" target="_blank"><i class="fab fa-discord"></i></a>
+            </div>
+
+            <div id="secret-box">
+                <strong><i class="fas fa-history"></i> Jejak Kehidupan:</strong>
+                <ul style="list-style: square; margin-left: 20px; margin-top: 10px;">
+                    <li>Alumni TK Pertiwi Payakumbuh</li>
+                    <li>Alumni SDN 53 Payakumbuh</li>
+                    <li>Pernah sekolah di SMPN 1 Payakumbuh 1 tahun</li>
+                    <li>Alumni SMKN 3 Payakumbuh</li>
+                    <li>Pernah Mengaji di MDTA Masjid Baitusssalam Payakumbuh</li>
+                    <li>Alumni Pelatihan PKK 2024 LKP Palapa Computer</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="tab-menu">
+            <button class="tab-btn active" onclick="openTab(event, 'biodata-tab')">Biodata</button>
+            <button class="tab-btn" onclick="openTab(event, 'hobi-tab')">Cita-Cita</button>
+            <button class="tab-btn" onclick="openTab(event, 'favorit-tab')">Favorit</button>
+            <button class="tab-btn" onclick="openTab(event, 'journey-tab')">Journey</button>
+        </div>
+
+        <div id="biodata-tab" class="tab-content active">
+            <h3 class="section-header">Identitas</h3>
+            <ul style="list-style:none;">
+                <li><strong>Nama</strong> <span>Fio Aldyth Anafiche</span></li>
+                <li><strong>Kuliah</strong> <span>Politeknik Pertanian Negeri Payakumbuh</span></li>
+                <li><strong>Tinggal</strong> <span>Sumatera Barat</span></li>
+                <li><strong>Motor</strong> <span>Supra X 125</span></li>
+                <li><strong>Smartphone</strong> <span>Xiaomi Redmi Note 10 5G</span></li>
+            </ul>
+        </div>
+
+        <div id="hobi-tab" class="tab-content">
+            <h3 class="section-header">Cita-Cita</h3>
+            <ul style="list-style:none;">
+                <li><strong>Harapan 1</strong> <span>membahagiakan orang tua</span></li>
+                <li><strong>Harapan 2</strong> <span><a href="https://schecter.co.jp/collaboration/4432/?products=ac-ar-07-avemujica/doloris/sig#detail" target="_blank">Membeli Gitar AC-AR-07-AveMujica</a></span></li>
+                <li><strong>Harapan 3</strong> <span>Dapat Pekerjaan yang Layak/memuaskan</span></li>
+            </ul>
+        </div>
+
+        <div id="favorit-tab" class="tab-content">
+            <h3 class="section-header">Favorit</h3>
+            <ul style="list-style:none;">
+                <li><strong>Genre</strong> <span>Gothic Metal (Ave Mujica), Heavy Metal, Slow Rock, Pop City</span></li>
+                <li><strong>Makanan</strong> <span>Mie Ayam, Nasi Goreng, Ayam Goreng</span></li>
+                <li><strong>Games</strong> <span>Rhythm & RPG</span></li>
+            </ul>
+        </div>
+
+        <div id="journey-tab" class="tab-content">
+            <h3 class="section-header">Journey</h3>
+            <ul style="list-style:none;">
+                <li><strong>Pendidikan</strong> <span>Mahasiswa Jurusan Teknologi Rekayasa Komputer</span></li>
+                <li><strong>Pengalaman</strong> <span>Magang di Toko Komputer, Pernah bekerja sebagai admin di Kantor Bupati</span></li>
+                <li><strong>Keahlian</strong> <span>Menginstal Software dan perawatan perangkat keras PC/Laptop, pemahaman Jaringan (masih standar)</span></li>
+            </ul>
+        </div>
+
+        <section class="quiz-container">
+            <h2 style="font-family: 'Playfair Display';">Yang Punya Web Ini Bukan Karbit</h2>
+            <p style="margin: 20px 0;">Siapa nama Waifu orang itu?</p>
+            <input type="text" id="quizInput" placeholder="Ketik nama di sini...">
+            <br>
+            <button class="quiz-btn" onclick="cekJawaban()">Jawab!!!</button>
+            <div id="quizResult" style="margin-top: 25px;"></div>
+        </section>
+
+        <section id="games" style="margin-bottom: 4rem;">
+            <h2 class="section-header">Koleksi Game Favorit</h2>
+            <div class="game-grid">
+                <div class="game-item" onclick="showReview('Shadow Of The Colossus', 'Game Masterpiece dimana kalian akan berperan sebagai player yang ingin menyelamatkan gadis yang ia sukai dari kematian, untuk itu player akan melakukan kontrak dengan Entitas, Kontrak itu adalah mengahncurkan 16 Collossi/Raksasa.', 'Games/Shadow of the Colossus.jpeg', 'https://teamico.fandom.com/wiki/Shadow_of_the_Colossus')">Shadow Of The Colossus</div>
+                <div class="game-item" onclick="showReview('Project Sekai', 'Game Rhythm Vocaloid, dimana kalian akan bermain dengan skill kecepatan mata dan jari, berisi lagu vocaloid dan musik asli dari gamenya', 'Games/Proseka.jpeg', 'https://www.colorfulstage.com/')">Project Sekai</div>
+                <div class="game-item" onclick="showReview('Persona 3 Reload', 'Game Masterpiece yang menghadirkan kembali pengalaman bermain RPG yang mendalam dan story yang sangat dalam menjadikan salah satu game persona terbaik.', 'Games/Persona 3 Reload.jpeg', 'https://persona.atlus.com/p3r/index.html?lang=en')">Persona 3 Reload</div>
+                <div class="game-item" onclick="showReview('Honkai Star Rail', 'Game RPG dari miHoYo, dimana kalian akan menjelajahi dunia yang penuh dengan keajaiban dan tantangan. walaupun ada powercreep gila, tapi story dan animasi sangat mengagumkan', 'Games/Honkai Star Rail.jpeg', 'https://hsr.hoyoverse.com/en-us/')">Honkai Star Rail</div>
+                <div class="game-item" onclick="showReview('Silent Hill', 'Horror. adalah kata yang tepat untuk seri game ini, Silent hill series menghadirkan atmosfer yang tak biasa yang dimana kalian harus menyelesaikan teka teki dan bertahan hidup di kota mati dan penuh kabut, gambar di atas adalah seri SilentHil 2 Remkes, yang juga bagus dan modern', 'Games/Silent Hill.jpeg', 'https://silenthill.fandom.com/wiki/Silent_Hill_(franchise)')">Silent Hill</div>
+                <div class="game-item" onclick="showReview('BanG Dream!', 'Game Rhythm, dimana kalian akan bermain dengan skill kecepatan mata dan jari, berisi lagu-lagu unik dari band-badnya dan musik asli dari gamenya, game ini juga menghadirkan musik cover dari anime, pop jepang dan game', 'Games/BangDream.jpeg', 'https://en.bang-dream.com/game/')">BanG Dream!</div>
+                <div class="game-item" onclick="showReview('Arknight', 'Game Turnbase, dimana kalian akan bermain sebagai pemimpin pasukan dalam pertempuran strategi. memiliki karakter yang unik dan banyak ras', 'Games/Arknight.jpeg', '#')">Arknight</div>
+            </div>
+            <div id="review-display" style="padding:20px; background:var(--bg-review); display:none; border:1px solid var(--border);">
+                <img src="" id="review-img" style="width:100%;">
+                <h3 id="review-title"></h3>
+                <p id="review-text"></p>
+                <a href="#" id="review-link" style="color:var(--primary);">Detail →</a>
+            </div>
+        </section>
+
+        <h2 class="section-header" id="music">Ave Mujica Recommanded Song</h2>
+        
+        <div class="music-track-container" data-src="musik/Sophie.mp3">
+            <div class="track-info">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button class="play-btn" onclick="handlePlay(this)"><i class="fas fa-play"></i></button>
+                    <span class="track-title">Ave Mujica - Sophie</span>
+                </div>
+                <div class="track-links">
+                    <a href="https://youtu.be/ivXQ21xDHfE" target="_blank"><i class="fab fa-youtube"></i></a>
+                    <a href="https://open.spotify.com/track/3kNstETQbKxO8bSph97UZO?si=d67d4fe582e64a39" target="_blank"><i class="fab fa-spotify"></i></a>
+                </div>
+            </div>
+            <div class="progress-container" onclick="seek(event, this)"><div class="progress-bar"></div></div>
+        </div>
+
+        <div class="music-track-container" data-src="musik/Deep Into The Forest.mp3">
+            <div class="track-info">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button class="play-btn" onclick="handlePlay(this)"><i class="fas fa-play"></i></button>
+                    <span class="track-title">Ave Mujica - Deep Into The Forest</span>
+                </div>
+                <div class="track-links">
+                    <a href="https://youtu.be/6USzFX8HnSY?si=vyvzz6wfDC8YKwux" target="_blank"><i class="fab fa-youtube"></i></a>
+                    <a href="https://open.spotify.com/track/4Mudg5HCSIhNyjN8Rg08gM?si=49c8b9b636a14e8c" target="_blank"><i class="fab fa-spotify"></i></a>
+                </div>
+            </div>
+            <div class="progress-container" onclick="seek(event, this)"><div class="progress-bar"></div></div>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="https://open.spotify.com/playlist/44QkmssDqktmaG8OJOYuwU" target="_blank" style="color: var(--secondary); text-decoration: none; font-size: 0.8rem; border: 1px solid var(--border); padding: 10px 20px; display: inline-block; transition: 0.3s;">
+                <i class="fab fa-spotify" style="margin-right: 8px;"></i> Temukan Musik Ave Mujica lainnya di Spotify
+            </a>
+        </div>
+    </div>
+
+    <footer>© 2026 GriffonLord/GitHub bangke limit 25mb</footer>
+
+    <script>
+        // ... (Script tetap sama seperti sebelumnya)
+        const quoteBox = document.getElementById('quoteBox');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) quoteBox.classList.add('fade-out');
+            else quoteBox.classList.remove('fade-out');
+        });
+
+        const bgm = document.getElementById('bgm-player');
+        const bgmList = {
+            dark: "musik/black.mp3",
+            light: "musik/white.mp3"
+        };
+
+        function updateBGM() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            bgm.src = bgmList[currentTheme];
+            if (manualAudio.paused) {
+                bgm.play().catch(() => {});
+            }
+        }
+
+        function toggleTheme() {
+            const b = document.body;
+            const btn = document.getElementById('theme-toggle');
+            if (b.getAttribute('data-theme') === 'dark') {
+                b.setAttribute('data-theme', 'light');
+                btn.innerHTML = '<i class="fas fa-moon"></i>';
+            } else {
+                b.setAttribute('data-theme', 'dark');
+                btn.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+            updateBGM();
+            initParticles();
+        }
+
+        let manualAudio = new Audio();
+        let currentContainer = null;
+
+        function handlePlay(btn) {
+            const container = btn.closest('.music-track-container');
+            if (currentContainer === container) {
+                if (manualAudio.paused) { 
+                    manualAudio.play(); 
+                    btn.innerHTML = '<i class="fas fa-pause"></i>';
+                    bgm.pause(); 
+                } else { 
+                    manualAudio.pause(); 
+                    btn.innerHTML = '<i class="fas fa-play"></i>';
+                    bgm.play(); 
+                }
+            } else {
+                if (currentContainer) currentContainer.querySelector('.play-btn').innerHTML = '<i class="fas fa-play"></i>';
+                currentContainer = container;
+                manualAudio.src = container.getAttribute('data-src');
+                manualAudio.play();
+                bgm.pause(); 
+                btn.innerHTML = '<i class="fas fa-pause"></i>';
+            }
+        }
+
+        manualAudio.onended = () => {
+            if(currentContainer) currentContainer.querySelector('.play-btn').innerHTML = '<i class="fas fa-play"></i>';
+            bgm.play(); 
+        };
+
+        function openTab(evt, tabName) {
+            let i, content, links;
+            content = document.getElementsByClassName("tab-content");
+            for (i = 0; i < content.length; i++) content[i].style.display = "none";
+            links = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < links.length; i++) links[i].classList.remove("active");
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.classList.add("active");
+        }
+
+        function toggleSecret() {
+            const s = document.getElementById('secret-box');
+            s.style.display = (s.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function cekJawaban() {
+            const v = document.getElementById('quizInput').value.trim().toLowerCase();
+            const r = document.getElementById('quizResult');
+            const kunci = ["misumi uika", "uika", "uika misumi", "doloris"];
+            r.style.display = "block";
+            
+            if (kunci.includes(v)) {
+                r.innerHTML = `
+                    <h3 style="color:var(--primary); margin-bottom: 15px;">Lah? Kok Tau???</h3>
+                    <img src="Games/pp2.jpg" alt="Portrait" style="width: 200px; border-radius: 10px; border: 1px solid var(--primary); margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;">
+                    <a href="https://bandori.fandom.com/wiki/Misumi_Uika" target="_blank" style="color:var(--primary); font-weight:bold; text-decoration:underline;">Lihat Wiki Karakter</a>`;
+            } else {
+                r.innerHTML = `<h3 style="color:var(--error-red)">Kau Orang Jomok! Kami semua tau Kau itu Jomok dan Homo, Main Cooking Mama sana!</h3>
+                <a href="https://play.google.com/store/apps/details?id=jp.co.ofcr.cm00" target="_blank" style="color:var(--secondary); text-decoration:underline;">Link Download Games</a>`;
+            }
+        }
+
+        function showReview(t, txt, img, l) {
+            const d = document.getElementById('review-display');
+            document.getElementById('review-title').innerText = t;
+            document.getElementById('review-text').innerText = txt;
+            document.getElementById('review-img').src = img;
+            document.getElementById('review-link').href = l;
+            d.style.display = 'block';
+        }
+
+        manualAudio.ontimeupdate = () => {
+            if (!currentContainer) return;
+            const progress = (manualAudio.currentTime / manualAudio.duration) * 100;
+            currentContainer.querySelector('.progress-bar').style.width = progress + '%';
+        };
+
+        function seek(event, el) {
+            if (currentContainer) manualAudio.currentTime = (event.offsetX / el.clientWidth) * manualAudio.duration;
+        }
+
+        window.addEventListener('click', () => {
+            if(bgm.paused && manualAudio.paused) updateBGM();
+        }, { once: true });
+
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let animationFrameId;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles(); 
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas(); 
+
+        function initParticles() {
+            particles = [];
+            const currentTheme = document.body.getAttribute('data-theme');
+            const numberOfParticles = Math.floor((canvas.width * canvas.height) / 10000); 
+
+            for (let i = 0; i < numberOfParticles; i++) {
+                if (currentTheme === 'light') {
+                    particles.push({
+                        type: 'triangle',
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        size: Math.random() * 5 + 3,
+                        vx: (Math.random() - 0.5) * 1,
+                        vy: (Math.random() - 0.5) * 1,
+                        rotation: Math.random() * Math.PI * 2,
+                        rotationSpeed: (Math.random() - 0.5) * 0.02
+                    });
+                } else {
+                    particles.push({
+                        type: 'ember',
+                        x: Math.random() * canvas.width,
+                        y: canvas.height + Math.random() * 100, 
+                        size: Math.random() * 3 + 1,
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: -Math.random() * 2 - 1, 
+                        color: `rgba(${200 + Math.random() * 55}, ${50 + Math.random() * 100}, 0, ${Math.random() * 0.8 + 0.2})`
+                    });
+                }
+            }
+        }
+
+        function drawTriangle(ctx, x, y, size, rotation) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rotation);
+            ctx.beginPath();
+            ctx.moveTo(0, -size);
+            ctx.lineTo(size * 0.866, size * 0.5);
+            ctx.lineTo(-size * 0.866, size * 0.5);
+            ctx.closePath();
+            ctx.fillStyle = 'white';
+            ctx.fill();
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'black';
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const currentTheme = document.body.getAttribute('data-theme');
+
+            particles.forEach(p => {
+                if (currentTheme === 'light' && p.type === 'triangle') {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.rotation += p.rotationSpeed;
+                    if (p.x < -p.size) p.x = canvas.width + p.size;
+                    if (p.x > canvas.width + p.size) p.x = -p.size;
+                    if (p.y < -p.size) p.y = canvas.height + p.size;
+                    if (p.y > canvas.height + p.size) p.y = -p.size;
+                    drawTriangle(ctx, p.x, p.y, p.size, p.rotation);
+                } else if (currentTheme === 'dark' && p.type === 'ember') {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vx += (Math.random() - 0.5) * 0.1;
+                    if(p.vx > 0.5) p.vx = 0.5;
+                    if(p.vx < -0.5) p.vx = -0.5;
+                    if (p.y < -p.size) {
+                        p.y = canvas.height + p.size;
+                        p.x = Math.random() * canvas.width;
+                        p.vy = -Math.random() * 2 - 1;
+                    }
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.random() * Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.shadowBlur = 5;
+                    ctx.shadowColor = p.color;
+                    ctx.fill();
+                    ctx.shadowBlur = 0; 
+                }
+            });
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        initParticles();
+        animate();
+    </script>
+</body>
+</html>
