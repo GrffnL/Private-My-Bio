@@ -286,6 +286,20 @@
             <div class="progress-container" onclick="seek(event, this)"><div class="progress-bar"></div></div>
         </div>
 
+        <div class="music-track-container" data-src="Angles.mp3">
+            <div class="track-info">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button class="play-btn" onclick="handlePlay(this)"><i class="fas fa-play"></i></button>
+                    <span class="track-title">Ave Mujica - Angles</span>
+                </div>
+                <div class="track-links">
+                    <a href="https://youtu.be/MbVgSM7Hhso?si=UrTnZXYbS4RdlPYI" target="_blank"><i class="fab fa-youtube"></i></a>
+                    <a href="https://open.spotify.com/track/1bQY4fbYAqyPAElVWhgLjG?si=d8fa759f89274e4a" target="_blank"><i class="fab fa-spotify"></i></a>
+                </div>
+            </div>
+            <div class="progress-container" onclick="seek(event, this)"><div class="progress-bar"></div></div>
+        </div>
+
         <div style="text-align: center; margin-top: 20px;">
             <a href="https://open.spotify.com/playlist/44QkmssDqktmaG8OJOYuwU" target="_blank" style="color: var(--secondary); text-decoration: none; font-size: 0.8rem; border: 1px solid var(--border); padding: 10px 20px; display: inline-block; transition: 0.3s;">
                 <i class="fab fa-spotify" style="margin-right: 8px;"></i> Temukan Musik Ave Mujica lainnya di Spotify
@@ -296,7 +310,6 @@
     <footer>© 2026 GriffonLord/GitHub bangke limit 25mb</footer>
 
     <script>
-        // ... (Script tetap sama seperti sebelumnya)
         const quoteBox = document.getElementById('quoteBox');
         window.addEventListener('scroll', () => {
             if (window.scrollY > 100) quoteBox.classList.add('fade-out');
