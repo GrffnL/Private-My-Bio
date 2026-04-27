@@ -362,28 +362,31 @@
         let manualAudio = new Audio();
         let currentContainer = null;
         let isBlueFire = false;
+        let isBlackSnow = false;
+        let isBloodFall = false;
+        let isCrowFeather = false;
 
         function handlePlay(btn) {
             const container = btn.closest('.music-track-container');
             const trackTitle = container.querySelector('.track-title').innerText;
+            const currentTheme = document.body.getAttribute('data-theme');
 
             if (currentContainer === container) {
                 if (manualAudio.paused) { 
                     manualAudio.play(); 
                     btn.innerHTML = '<i class="fas fa-pause"></i>';
                     bgm.pause(); 
-                    if (trackTitle === "Ave Mujica - In Your Blue Eyes") {
-                        isBlueFire = true;
-                        initParticles();
-                    }
+                    isBlueFire = (trackTitle === "Ave Mujica - In Your Blue Eyes");
+                    isBlackSnow = (trackTitle === "Ave Mujica - Angles");
+                    isBloodFall = (trackTitle === "Ave Mujica - Sophie" && currentTheme === 'dark');
+                    isCrowFeather = (trackTitle === "Ave Mujica - Deep Into The Forest" && currentTheme === 'dark');
+                    initParticles();
                 } else { 
                     manualAudio.pause(); 
                     btn.innerHTML = '<i class="fas fa-play"></i>';
                     bgm.play(); 
-                    if (trackTitle === "Ave Mujica - In Your Blue Eyes") {
-                        isBlueFire = false;
-                        initParticles();
-                    }
+                    resetStates();
+                    initParticles();
                 }
             } else {
                 if (currentContainer) currentContainer.querySelector('.play-btn').innerHTML = '<i class="fas fa-play"></i>';
@@ -393,19 +396,27 @@
                 bgm.pause(); 
                 btn.innerHTML = '<i class="fas fa-pause"></i>';
                 
-                if (trackTitle === "Ave Mujica - In Your Blue Eyes") {
-                    isBlueFire = true;
-                } else {
-                    isBlueFire = false;
-                }
+                resetStates();
+                isBlueFire = (trackTitle === "Ave Mujica - In Your Blue Eyes");
+                isBlackSnow = (trackTitle === "Ave Mujica - Angles");
+                isBloodFall = (trackTitle === "Ave Mujica - Sophie" && currentTheme === 'dark');
+                isCrowFeather = (trackTitle === "Ave Mujica - Deep Into The Forest" && currentTheme === 'dark');
+                
                 initParticles();
             }
+        }
+
+        function resetStates() {
+            isBlueFire = false;
+            isBlackSnow = false;
+            isBloodFall = false;
+            isCrowFeather = false;
         }
 
         manualAudio.onended = () => {
             if(currentContainer) currentContainer.querySelector('.play-btn').innerHTML = '<i class="fas fa-play"></i>';
             bgm.play(); 
-            isBlueFire = false;
+            resetStates();
             initParticles();
         };
 
@@ -485,32 +496,67 @@
 
             for (let i = 0; i < numberOfParticles; i++) {
                 if (currentTheme === 'light') {
-                    particles.push({
-                        type: 'triangle',
-                        x: Math.random() * canvas.width,
-                        y: Math.random() * canvas.height,
-                        size: Math.random() * 5 + 3,
-                        vx: (Math.random() - 0.5) * 1,
-                        vy: (Math.random() - 0.5) * 1,
-                        rotation: Math.random() * Math.PI * 2,
-                        rotationSpeed: (Math.random() - 0.5) * 0.02
-                    });
-                } else {
-                    let color;
-                    if (isBlueFire) {
-                        color = `rgba(0, ${100 + Math.random() * 155}, ${200 + Math.random() * 55}, ${Math.random() * 0.8 + 0.2})`;
+                    if (isBlackSnow) {
+                        particles.push({
+                            type: 'snow',
+                            x: Math.random() * canvas.width,
+                            y: Math.random() * canvas.height,
+                            size: Math.random() * 3 + 1,
+                            vx: (Math.random() - 0.5) * 0.5,
+                            vy: Math.random() * 2 + 1,
+                            color: 'rgba(0, 0, 0, 0.7)'
+                        });
                     } else {
-                        color = `rgba(${200 + Math.random() * 55}, ${50 + Math.random() * 100}, 0, ${Math.random() * 0.8 + 0.2})`;
+                        particles.push({
+                            type: 'triangle',
+                            x: Math.random() * canvas.width,
+                            y: Math.random() * canvas.height,
+                            size: Math.random() * 5 + 3,
+                            vx: (Math.random() - 0.5) * 1,
+                            vy: (Math.random() - 0.5) * 1,
+                            rotation: Math.random() * Math.PI * 2,
+                            rotationSpeed: (Math.random() - 0.5) * 0.02
+                        });
                     }
-                    particles.push({
-                        type: 'ember',
-                        x: Math.random() * canvas.width,
-                        y: canvas.height + Math.random() * 100, 
-                        size: Math.random() * 3 + 1,
-                        vx: (Math.random() - 0.5) * 0.5,
-                        vy: -Math.random() * 2 - 1, 
-                        color: color
-                    });
+                } else {
+                    if (isCrowFeather) {
+                        particles.push({
+                            type: 'feather',
+                            x: Math.random() * canvas.width,
+                            y: Math.random() * canvas.height - canvas.height,
+                            size: Math.random() * 6 + 4,
+                            vx: (Math.random() - 0.5) * 1,
+                            vy: Math.random() * 1 + 0.5, // Lambat
+                            rotation: Math.random() * Math.PI * 2,
+                            rotationSpeed: (Math.random() - 0.5) * 0.05,
+                            color: 'rgba(150, 0, 0, 0.8)'
+                        });
+                    } else if (isBloodFall) {
+                        particles.push({
+                            type: 'blood',
+                            x: Math.random() * canvas.width,
+                            y: Math.random() * canvas.height - canvas.height,
+                            size: Math.random() * 4 + 2,
+                            vy: Math.random() * 4 + 2,
+                            color: `rgba(${150 + Math.random() * 100}, 0, 0, ${Math.random() * 0.6 + 0.4})`
+                        });
+                    } else {
+                        let color;
+                        if (isBlueFire) {
+                            color = `rgba(0, ${100 + Math.random() * 155}, ${200 + Math.random() * 55}, ${Math.random() * 0.8 + 0.2})`;
+                        } else {
+                            color = `rgba(${200 + Math.random() * 55}, ${50 + Math.random() * 100}, 0, ${Math.random() * 0.8 + 0.2})`;
+                        }
+                        particles.push({
+                            type: 'ember',
+                            x: Math.random() * canvas.width,
+                            y: canvas.height + Math.random() * 100, 
+                            size: Math.random() * 3 + 1,
+                            vx: (Math.random() - 0.5) * 0.5,
+                            vy: -Math.random() * 2 - 1, 
+                            color: color
+                        });
+                    }
                 }
             }
         }
@@ -532,38 +578,163 @@
             ctx.restore();
         }
 
+        function drawHatch(ctx) {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(100, 100, 100, 0.15)';
+            ctx.lineWidth = 1;
+            for (let i = -canvas.height; i < canvas.width; i += 10) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i + canvas.height, canvas.height);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function drawInkSplats(ctx) {
+            ctx.save();
+            ctx.fillStyle = 'rgba(15, 15, 15, 0.5)';
+            for(let i=0; i<15; i++) {
+                ctx.beginPath();
+                ctx.arc((i * 137) % canvas.width, (i * 241) % canvas.height, 50 + (i % 50), 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        function drawRedMoon(ctx) {
+            ctx.save();
+            const moonX = canvas.width - 150;
+            const moonY = 150;
+            const moonRadius = 60;
+            
+            const glow = ctx.createRadialGradient(moonX, moonY, 0, moonX, moonY, 150);
+            glow.addColorStop(0, 'rgba(255, 0, 0, 0.4)');
+            glow.addColorStop(1, 'rgba(255, 0, 0, 0)');
+            ctx.fillStyle = glow;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.beginPath();
+            ctx.arc(moonX, moonY, moonRadius, 0, Math.PI * 2);
+            ctx.fillStyle = '#ff0000';
+            ctx.shadowBlur = 40;
+            ctx.shadowColor = '#ff3333';
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function drawBlueAura(ctx) {
+            ctx.save();
+            const aura = ctx.createLinearGradient(0, 0, 0, canvas.height / 3);
+            aura.addColorStop(0, 'rgba(0, 50, 200, 0.4)'); // Dark blue light
+            aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = aura;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.restore();
+        }
+
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const currentTheme = document.body.getAttribute('data-theme');
 
+            if (currentTheme === 'light' && isBlackSnow) {
+                const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                grad.addColorStop(0, '#ffffff');
+                grad.addColorStop(1, '#333333');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            } 
+            else if (currentTheme === 'dark' && isBloodFall) {
+                const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                grad.addColorStop(0, '#000000');
+                grad.addColorStop(0.5, '#222222');
+                grad.addColorStop(1, '#880000');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                drawHatch(ctx);
+            }
+            else if (currentTheme === 'dark' && isCrowFeather) {
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                drawInkSplats(ctx);
+                drawRedMoon(ctx);
+            }
+            else if (currentTheme === 'dark' && isBlueFire) {
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                drawBlueAura(ctx);
+            }
+
             particles.forEach(p => {
-                if (currentTheme === 'light' && p.type === 'triangle') {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.rotation += p.rotationSpeed;
-                    if (p.x < -p.size) p.x = canvas.width + p.size;
-                    if (p.x > canvas.width + p.size) p.x = -p.size;
-                    if (p.y < -p.size) p.y = canvas.height + p.size;
-                    if (p.y > canvas.height + p.size) p.y = -p.size;
-                    drawTriangle(ctx, p.x, p.y, p.size, p.rotation);
-                } else if (currentTheme === 'dark' && p.type === 'ember') {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.vx += (Math.random() - 0.5) * 0.1;
-                    if(p.vx > 0.5) p.vx = 0.5;
-                    if(p.vx < -0.5) p.vx = -0.5;
-                    if (p.y < -p.size) {
-                        p.y = canvas.height + p.size;
-                        p.x = Math.random() * canvas.width;
-                        p.vy = -Math.random() * 2 - 1;
+                if (currentTheme === 'light') {
+                    if (p.type === 'triangle' && !isBlackSnow) {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.rotation += p.rotationSpeed;
+                        if (p.x < -p.size) p.x = canvas.width + p.size;
+                        if (p.x > canvas.width + p.size) p.x = -p.size;
+                        if (p.y < -p.size) p.y = canvas.height + p.size;
+                        if (p.y > canvas.height + p.size) p.y = -p.size;
+                        drawTriangle(ctx, p.x, p.y, p.size, p.rotation);
+                    } else if (p.type === 'snow' && isBlackSnow) {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        if (p.y > canvas.height) {
+                            p.y = -10;
+                            p.x = Math.random() * canvas.width;
+                        }
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fillStyle = p.color;
+                        ctx.fill();
                     }
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size, 0, Math.random() * Math.PI * 2);
-                    ctx.fillStyle = p.color;
-                    ctx.shadowBlur = 5;
-                    ctx.shadowColor = p.color;
-                    ctx.fill();
-                    ctx.shadowBlur = 0; 
+                } else if (currentTheme === 'dark') {
+                    if (p.type === 'feather') {
+                        p.x += p.vx + Math.sin(p.y * 0.01);
+                        p.y += p.vy;
+                        p.rotation += p.rotationSpeed;
+                        if (p.y > canvas.height) {
+                            p.y = -20;
+                            p.x = Math.random() * canvas.width;
+                        }
+                        ctx.save();
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate(p.rotation);
+                        ctx.beginPath();
+                        ctx.ellipse(0, 0, p.size, p.size/3, 0, 0, Math.PI * 2);
+                        ctx.fillStyle = p.color;
+                        ctx.fill();
+                        ctx.restore();
+                    } else if (p.type === 'blood') {
+                        p.y += p.vy;
+                        if (p.y > canvas.height) {
+                            p.y = -20;
+                            p.x = Math.random() * canvas.width;
+                        }
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.bezierCurveTo(p.x - p.size, p.y + p.size, p.x + p.size, p.y + p.size, p.x, p.y + p.size * 2);
+                        ctx.fillStyle = p.color;
+                        ctx.fill();
+                    } else if (p.type === 'ember') {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vx += (Math.random() - 0.5) * 0.1;
+                        if(p.vx > 0.5) p.vx = 0.5;
+                        if(p.vx < -0.5) p.vx = -0.5;
+                        if (p.y < -p.size) {
+                            p.y = canvas.height + p.size;
+                            p.x = Math.random() * canvas.width;
+                            p.vy = -Math.random() * 2 - 1;
+                        }
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.random() * Math.PI * 2);
+                        ctx.fillStyle = p.color;
+                        ctx.shadowBlur = 5;
+                        ctx.shadowColor = p.color;
+                        ctx.fill();
+                        ctx.shadowBlur = 0; 
+                    }
                 }
             });
             animationFrameId = requestAnimationFrame(animate);
