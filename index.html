@@ -361,18 +361,29 @@
 
         let manualAudio = new Audio();
         let currentContainer = null;
+        let isBlueFire = false;
 
         function handlePlay(btn) {
             const container = btn.closest('.music-track-container');
+            const trackTitle = container.querySelector('.track-title').innerText;
+
             if (currentContainer === container) {
                 if (manualAudio.paused) { 
                     manualAudio.play(); 
                     btn.innerHTML = '<i class="fas fa-pause"></i>';
                     bgm.pause(); 
+                    if (trackTitle === "Ave Mujica - In Your Blue Eyes") {
+                        isBlueFire = true;
+                        initParticles();
+                    }
                 } else { 
                     manualAudio.pause(); 
                     btn.innerHTML = '<i class="fas fa-play"></i>';
                     bgm.play(); 
+                    if (trackTitle === "Ave Mujica - In Your Blue Eyes") {
+                        isBlueFire = false;
+                        initParticles();
+                    }
                 }
             } else {
                 if (currentContainer) currentContainer.querySelector('.play-btn').innerHTML = '<i class="fas fa-play"></i>';
@@ -381,12 +392,21 @@
                 manualAudio.play();
                 bgm.pause(); 
                 btn.innerHTML = '<i class="fas fa-pause"></i>';
+                
+                if (trackTitle === "Ave Mujica - In Your Blue Eyes") {
+                    isBlueFire = true;
+                } else {
+                    isBlueFire = false;
+                }
+                initParticles();
             }
         }
 
         manualAudio.onended = () => {
             if(currentContainer) currentContainer.querySelector('.play-btn').innerHTML = '<i class="fas fa-play"></i>';
             bgm.play(); 
+            isBlueFire = false;
+            initParticles();
         };
 
         function openTab(evt, tabName) {
@@ -476,6 +496,12 @@
                         rotationSpeed: (Math.random() - 0.5) * 0.02
                     });
                 } else {
+                    let color;
+                    if (isBlueFire) {
+                        color = `rgba(0, ${100 + Math.random() * 155}, ${200 + Math.random() * 55}, ${Math.random() * 0.8 + 0.2})`;
+                    } else {
+                        color = `rgba(${200 + Math.random() * 55}, ${50 + Math.random() * 100}, 0, ${Math.random() * 0.8 + 0.2})`;
+                    }
                     particles.push({
                         type: 'ember',
                         x: Math.random() * canvas.width,
@@ -483,7 +509,7 @@
                         size: Math.random() * 3 + 1,
                         vx: (Math.random() - 0.5) * 0.5,
                         vy: -Math.random() * 2 - 1, 
-                        color: `rgba(${200 + Math.random() * 55}, ${50 + Math.random() * 100}, 0, ${Math.random() * 0.8 + 0.2})`
+                        color: color
                     });
                 }
             }
