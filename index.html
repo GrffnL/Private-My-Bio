@@ -8,6 +8,42 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;600&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+    
+    <!-- ANTI INSPECT ELEMENT SCRIPT -->
+    <script>
+        // Mematikan Klik Kanan
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // Mematikan Shortcut Keyboard (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123) { // F12
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'i'.charCodeAt(0))) { // Ctrl+Shift+I
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0) || e.keyCode == 'j'.charCodeAt(0))) { // Ctrl+Shift+J
+                return false;
+            }
+            if (e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0) || e.keyCode == 'u'.charCodeAt(0))) { // Ctrl+U (View Source)
+                return false;
+            }
+            if (e.ctrlKey && (e.keyCode == 'S'.charCodeAt(0) || e.keyCode == 's'.charCodeAt(0))) { // Ctrl+S (Save Page)
+                return false;
+            }
+        };
+
+        // Deteksi jika DevTools dibuka (akan memicu debugger terus menerus)
+        setInterval(function() {
+            const before = new Date().getTime();
+            debugger;
+            const after = new Date().getTime();
+            if (after - before > 100) {
+                window.location.reload(); // Refresh jika ketahuan dibuka
+            }
+        }, 100);
+    </script>
+
     <style>
         :root {
             --primary: #ffffff;
@@ -45,7 +81,7 @@
             --nav-bg: rgba(18, 5, 32, 0.8);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; scroll-behavior: smooth; transition: background 0.3s, color 0.3s; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; scroll-behavior: smooth; transition: background 0.3s, color 0.3s; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
         body { background-color: var(--bg-deep); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
 
         .floating-quote { position: fixed; top: 250px; left: 5%; z-index: 3000; max-width: 250px; pointer-events: none; transition: opacity 0.6s ease, transform 0.6s ease; opacity: 1; transform: translateX(0); }
@@ -71,7 +107,6 @@
             position: relative;
             padding-bottom: 5px;
         }
-        /* Indikator Navigasi Aktif */
         .nav-links a:hover, .nav-links a.active-nav { color: var(--primary); }
         .nav-links a.active-nav::after {
             content: '';
@@ -83,9 +118,7 @@
             background: var(--primary);
         }
 
-        /* Mobile Menu Toggle */
         .menu-toggle { display: none; background: none; border: none; color: var(--primary); font-size: 1.5rem; cursor: pointer; }
-
         #theme-toggle { background: var(--primary); color: var(--bg-deep); border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px; font-size: 0.8rem; }
 
         .container { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
@@ -170,7 +203,6 @@
         .progress-container { height: 2px; background: var(--border); cursor: pointer; width: 100%; position: relative; }
         .progress-bar { height: 100%; width: 0%; background: var(--primary); }
 
-        /* Back to Top Button */
         #backToTop {
             position: fixed;
             bottom: 30px;
@@ -404,11 +436,9 @@
         const backToTop = document.getElementById('backToTop');
         
         window.addEventListener('scroll', () => {
-            // Fade out quote
             if (window.scrollY > 100) quoteBox.classList.add('fade-out');
             else quoteBox.classList.remove('fade-out');
 
-            // Show/hide Back to Top button
             if (window.scrollY > 500) backToTop.style.display = 'block';
             else backToTop.style.display = 'none';
         });
