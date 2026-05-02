@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Fio Aldyth Anafiche">
+    <meta name="name" content="Fio Aldyth Anafiche">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Private Bio</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -230,12 +230,67 @@
             font-size: 1.2rem;
         }
 
+        .easter-egg-container {
+            text-align: right;
+            margin-top: 20px;
+            position: relative;
+        }
+        #easterEggInput {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--secondary);
+            padding: 5px 10px;
+            font-size: 0.7rem;
+            width: 120px;
+            outline: none;
+            transition: 0.3s;
+        }
+        #easterEggInput:focus {
+            border-color: var(--primary);
+            width: 150px;
+        }
+        #easter-video-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 250px;
+            background: #000;
+            border: 2px solid var(--primary);
+            z-index: 4000;
+            display: none;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+        #easter-video-container video {
+            width: 100%;
+            display: block;
+        }
+        .close-video {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            background: var(--primary);
+            color: var(--bg-deep);
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
         footer { text-align: center; padding: 4rem; color: var(--secondary); font-size: 0.7rem; letter-spacing: 3px; }
     </style>
 </head>
 <body data-theme="dark">
 
     <audio id="bgm-player" loop></audio>
+
+    <!-- Container Video Easter Egg -->
+    <div id="easter-video-container">
+        <button class="close-video" onclick="closeEasterVideo()">×</button>
+        <video id="sakiVideo" src="123/1.mp4"></video>
+    </div>
 
     <div class="floating-quote" id="quoteBox">
         <p>"If You don't fight, You can't win, Because I was born into this world."</p>
@@ -263,6 +318,7 @@
     <button id="backToTop" onclick="scrollToTop()"><i class="fas fa-chevron-up"></i></button>
 
     <div class="container">
+        <!-- (Konten Profil, Tab, Quiz, Games tetap dipertahankan sesuai kode awal) -->
         <section class="profile-section" id="profil">
             <img src="PP.jpg" alt="Profile" class="profile-img" onclick="toggleSecret()">
             <h1>Leodyth_</h1>
@@ -362,6 +418,7 @@
             </div>
         </section>
 
+        <!-- --- MUSIC LIST --- -->
         <h2 class="section-header" id="music">Ave Mujica Recommanded Song</h2>
         
         <div class="music-track-container" data-src="musik/Sophie.mp3">
@@ -438,6 +495,11 @@
                 <i class="fab fa-spotify" style="margin-right: 8px;"></i> Temukan Musik Ave Mujica lainnya di Spotify
             </a>
         </div>
+
+        <!-- --- EASTER EGG BAR (BARU) --- -->
+        <div class="easter-egg-container">
+            <input type="text" id="easterEggInput" placeholder="Easter egg Code" onkeyup="checkEasterEgg(event)">
+        </div>
     </div>
 
     <footer>© 2026 GriffonLord site#</footer>
@@ -445,6 +507,8 @@
     <script>
         const quoteBox = document.getElementById('quoteBox');
         const backToTop = document.getElementById('backToTop');
+        const sakiVideo = document.getElementById('sakiVideo');
+        const videoContainer = document.getElementById('easter-video-container');
         
         window.addEventListener('scroll', () => {
             if (window.scrollY > 100) quoteBox.classList.add('fade-out');
@@ -453,6 +517,30 @@
             if (window.scrollY > 500) backToTop.style.display = 'block';
             else backToTop.style.display = 'none';
         });
+
+        /* LOGIKA EASTER EGG SAKI-CHAN */
+        function checkEasterEgg(event) {
+            const val = event.target.value;
+            if (val.toLowerCase() === "saki-chan") {
+                videoContainer.style.display = 'block';
+                sakiVideo.play();
+                bgm.pause(); // Matikan BGM Latar
+                event.target.value = ""; // Reset input
+            }
+        }
+
+        function closeEasterVideo() {
+            sakiVideo.pause();
+            sakiVideo.currentTime = 0;
+            videoContainer.style.display = 'none';
+            // Nyalakan kembali BGM hanya jika musik manual tidak sedang diputar
+            if (manualAudio.paused) {
+                bgm.play().catch(() => {});
+            }
+        }
+
+        // Event listener saat video selesai diputar
+        sakiVideo.onended = closeEasterVideo;
 
         function scrollToTop() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -480,7 +568,8 @@
         function updateBGM() {
             const currentTheme = document.body.getAttribute('data-theme');
             bgm.src = bgmList[currentTheme];
-            if (manualAudio.paused) {
+            // BGM tidak akan autoplay jika video sedang jalan
+            if (manualAudio.paused && videoContainer.style.display !== 'block') {
                 bgm.play().catch(() => {});
             }
         }
@@ -522,7 +611,8 @@
                 } else { 
                     manualAudio.pause(); 
                     btn.innerHTML = '<i class="fas fa-play"></i>';
-                    bgm.play(); 
+                    // BGM nyala jika video tidak diputar
+                    if (videoContainer.style.display !== 'block') bgm.play(); 
                     resetStates();
                     initParticles();
                 }
@@ -566,7 +656,7 @@
 
         manualAudio.onended = () => {
             if(currentContainer) currentContainer.querySelector('.play-btn').innerHTML = '<i class="fas fa-play"></i>';
-            bgm.play(); 
+            if (videoContainer.style.display !== 'block') bgm.play(); 
             resetStates();
             initParticles();
         };
@@ -624,7 +714,7 @@
         }
 
         window.addEventListener('click', () => {
-            if(bgm.paused && manualAudio.paused) updateBGM();
+            if(bgm.paused && manualAudio.paused && videoContainer.style.display !== 'block') updateBGM();
         }, { once: true });
 
         const canvas = document.getElementById('particle-canvas');
