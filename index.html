@@ -145,6 +145,17 @@
             .menu-toggle { display: block; }
             .floating-quote { left: 2%; top: 200px; max-width: 150px; }
             .floating-quote p { font-size: 1rem; }
+
+            /* PERBAIKAN UNTUK LIST PADA MOBILE[cite: 1] */
+            .tab-content ul li {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 5px;
+            }
+            .tab-content ul li span {
+                text-align: left;
+                width: 100%;
+            }
         }
 
         .sub-title { font-size: 0.8rem; letter-spacing: 5px; text-transform: uppercase; color: var(--secondary); margin-bottom: 1.5rem; }
@@ -168,6 +179,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap; /* Menjaga agar tidak meluap[cite: 1] */
         }
 
         .tab-content ul li strong {
@@ -177,6 +189,7 @@
             text-transform: uppercase;
             font-size: 0.85rem;
             letter-spacing: 1px;
+            min-width: 100px; /* Memberikan ruang minimal untuk label[cite: 1] */
         }
 
         .tab-content ul li span {
@@ -184,6 +197,8 @@
             font-weight: 300;
             color: var(--secondary);
             font-size: 0.9rem;
+            flex: 1; /* Mengambil ruang tersisa[cite: 1] */
+            text-align: right; /* Default tetap kanan untuk desktop[cite: 1] */
         }
 
         .quiz-container { border: 1px solid var(--border); padding: 50px; text-align: center; margin-bottom: 4rem; background: var(--bg-card); }
