@@ -19,6 +19,7 @@
             --border: rgba(255, 255, 255, 0.1);
             --error-red: #ff4d4d;
             --nav-bg: rgba(0, 0, 0, 0.9);
+            --accent: #ffffff;
         }
 
         [data-theme="light"] {
@@ -30,13 +31,13 @@
             --text-main: #000000;
             --border: rgba(0, 0, 0, 0.1);
             --nav-bg: rgba(255, 255, 255, 0.9);
+            --accent: #000000;
         }
 
-        /* Tema Khusus Musica Caelestis (Hanya aktif saat lagu diputar di Light Mode) */
         body.musica-caelestis-active[data-theme="light"] {
             --primary: #ffffff;
             --secondary: #e0e0e0;
-            --bg-deep: #120520; /* Ungu sangat gelap untuk background bintang */
+            --bg-deep: #120520;
             --bg-card: rgba(255, 255, 255, 0.1);
             --bg-review: rgba(255, 255, 255, 0.15);
             --text-main: #ffffff;
@@ -55,20 +56,36 @@
         .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         .grain { position: absolute; width: 100%; height: 100%; background-image: url('https://upload.wikimedia.org/wikipedia/commons/7/76/Noise_6.png'); opacity: 0.03; pointer-events: none; }
         
-        #particle-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
+        #particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
 
         nav { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; padding: 1rem 8%; background: var(--nav-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); z-index: 2000; }
         .logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; color: var(--primary); }
         .nav-right { display: flex; align-items: center; gap: 30px; }
         .nav-links { display: flex; gap: 20px; }
-        .nav-links a { color: var(--secondary); text-decoration: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-links a { 
+            color: var(--secondary); 
+            text-decoration: none; 
+            font-size: 0.85rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            position: relative;
+            padding-bottom: 5px;
+        }
+        /* Indikator Navigasi Aktif */
+        .nav-links a:hover, .nav-links a.active-nav { color: var(--primary); }
+        .nav-links a.active-nav::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--primary);
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle { display: none; background: none; border: none; color: var(--primary); font-size: 1.5rem; cursor: pointer; }
+
         #theme-toggle { background: var(--primary); color: var(--bg-deep); border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px; font-size: 0.8rem; }
 
         .container { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
@@ -78,9 +95,21 @@
         h1 { font-family: 'Playfair Display', serif; font-size: 3.5rem; margin-bottom: 0.5rem; }
         
         @media (max-width: 600px) {
-            h1 { font-size: 2rem; }
+            h1 { font-size: 2.5rem; }
             .logo { font-size: 1.4rem; }
-            .nav-links { display: none; }
+            .nav-links { 
+                display: none; 
+                flex-direction: column; 
+                position: absolute; 
+                top: 100%; 
+                left: 0; 
+                width: 100%; 
+                background: var(--nav-bg); 
+                padding: 20px; 
+                border-bottom: 1px solid var(--border);
+            }
+            .nav-links.mobile-show { display: flex; }
+            .menu-toggle { display: block; }
             .floating-quote { left: 2%; top: 200px; max-width: 150px; }
             .floating-quote p { font-size: 1rem; }
         }
@@ -89,6 +118,7 @@
 
         .social-icons { display: flex; justify-content: center; gap: 25px; margin-bottom: 2rem; }
         .social-icons a { font-size: 1.2rem; color: var(--primary); transition: 0.3s; }
+        .social-icons a:hover { transform: translateY(-5px); filter: drop-shadow(0 0 5px var(--primary)); }
         
         #secret-box { display: none; margin: 20px auto; padding: 25px; background: var(--bg-card); border: 1px solid var(--border); font-size: 0.9rem; text-align: left; max-width: 500px; }
 
@@ -112,7 +142,7 @@
             font-weight: 700;
             color: var(--primary);
             text-transform: uppercase;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             letter-spacing: 1px;
         }
 
@@ -129,8 +159,8 @@
 
         .section-header { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
         .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin: 2rem 0; }
-        .game-item { background: transparent; padding: 15px; border: 1px solid var(--border); cursor: pointer; text-align: center; font-weight: bold; font-size: 0.85rem; }
-        .game-item:hover { background: var(--primary); color: var(--bg-deep); }
+        .game-item { background: transparent; padding: 15px; border: 1px solid var(--border); cursor: pointer; text-align: center; font-weight: bold; font-size: 0.85rem; transition: 0.3s; }
+        .game-item:hover { background: var(--primary); color: var(--bg-deep); transform: scale(1.05); }
 
         .music-track-container { background: var(--bg-card); padding: 25px; margin-bottom: 15px; border: 1px solid var(--border); }
         .track-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -139,6 +169,23 @@
         .play-btn { background: var(--primary); color: var(--bg-deep); border: none; width: 35px; height: 35px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .progress-container { height: 2px; background: var(--border); cursor: pointer; width: 100%; position: relative; }
         .progress-bar { height: 100%; width: 0%; background: var(--primary); }
+
+        /* Back to Top Button */
+        #backToTop {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: var(--bg-deep);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: none;
+            z-index: 3000;
+            font-size: 1.2rem;
+        }
 
         footer { text-align: center; padding: 4rem; color: var(--secondary); font-size: 0.7rem; letter-spacing: 3px; }
     </style>
@@ -160,14 +207,17 @@
     <nav>
         <div class="logo">My Personal Site</div>
         <div class="nav-right">
-            <div class="nav-links">
-                <a href="#profil">Profil</a>
-                <a href="#games">Games</a>
-                <a href="#music">Playlist</a>
+            <button class="menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+            <div class="nav-links" id="navLinks">
+                <a href="#profil" onclick="setActive(this)">Profil</a>
+                <a href="#games" onclick="setActive(this)">Games</a>
+                <a href="#music" onclick="setActive(this)">Playlist</a>
             </div>
             <button id="theme-toggle" onclick="toggleTheme()"><i class="fas fa-sun"></i></button>
         </div>
     </nav>
+
+    <button id="backToTop" onclick="scrollToTop()"><i class="fas fa-chevron-up"></i></button>
 
     <div class="container">
         <section class="profile-section" id="profil">
@@ -217,7 +267,7 @@
             <h3 class="section-header">Cita-Cita</h3>
             <ul style="list-style:none;">
                 <li><strong>Harapan 1</strong> <span>Membahagiakan orang tua</span></li>
-                <li><strong>Harapan 2</strong> <span><a href="https://schecter.co.jp/collaboration/4432/?products=ac-ar-07-avemujica/doloris/sig#detail" target="_blank">Membeli Gitar AC-AR-07-AveMujica</a></span></li>
+                <li><strong>Harapan 2</strong> <span><a href="https://schecter.co.jp/collaboration/4432/?products=ac-ar-07-avemujica/doloris/sig#detail" target="_blank" style="color:var(--primary);">Membeli Gitar AC-AR-07-AveMujica</a></span></li>
                 <li><strong>Harapan 3</strong> <span>Dapat Pekerjaan yang Layak/memuaskan</span></li>
             </ul>
         </div>
@@ -262,10 +312,10 @@
                 <div class="game-item" onclick="showReview('Mobile Legends Bang-Bang', 'ML Game Bocah.', 'Games/ML.jpg', 'https://www.mobilelegends.com/')">Mobile Legends Bang-Bang</div>
             </div>
             <div id="review-display" style="padding:20px; background:var(--bg-review); display:none; border:1px solid var(--border);">
-                <img src="" id="review-img" style="width:100%;">
-                <h3 id="review-title"></h3>
-                <p id="review-text"></p>
-                <a href="#" id="review-link" style="color:var(--primary);">Detail →</a>
+                <img src="" id="review-img" style="width:100%; border-radius: 4px; margin-bottom: 15px;">
+                <h3 id="review-title" style="margin-bottom: 10px;"></h3>
+                <p id="review-text" style="margin-bottom: 15px; font-size: 0.95rem;"></p>
+                <a href="#" id="review-link" target="_blank" style="color:var(--primary); text-decoration: none; font-weight: bold;">Detail →</a>
             </div>
         </section>
 
@@ -351,10 +401,34 @@
 
     <script>
         const quoteBox = document.getElementById('quoteBox');
+        const backToTop = document.getElementById('backToTop');
+        
         window.addEventListener('scroll', () => {
+            // Fade out quote
             if (window.scrollY > 100) quoteBox.classList.add('fade-out');
             else quoteBox.classList.remove('fade-out');
+
+            // Show/hide Back to Top button
+            if (window.scrollY > 500) backToTop.style.display = 'block';
+            else backToTop.style.display = 'none';
         });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('mobile-show');
+        }
+
+        function setActive(el) {
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active-nav'));
+            el.classList.add('active-nav');
+            if (window.innerWidth <= 600) {
+                document.getElementById('navLinks').classList.remove('mobile-show');
+            }
+        }
 
         const bgm = document.getElementById('bgm-player');
         const bgmList = {
@@ -495,6 +569,7 @@
             document.getElementById('review-img').src = img;
             document.getElementById('review-link').href = l;
             d.style.display = 'block';
+            d.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         manualAudio.ontimeupdate = () => {
