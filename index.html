@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="name" content="Fio Aldyth Anafiche">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Private Bio</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -9,12 +10,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;600&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
     
-    <!-- ANTI INSPECT ELEMENT SCRIPT -->
     <script>
-        // Mematikan Klik Kanan
         document.addEventListener('contextmenu', event => event.preventDefault());
 
-        // Mematikan Shortcut Keyboard (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
         document.onkeydown = function(e) {
             if (e.keyCode == 123) { // F12
                 return false;
@@ -33,13 +31,12 @@
             }
         };
 
-        // Deteksi jika DevTools dibuka (akan memicu debugger terus menerus)
         setInterval(function() {
             const before = new Date().getTime();
             debugger;
             const after = new Date().getTime();
             if (after - before > 100) {
-                window.location.reload(); // Refresh jika ketahuan dibuka
+                window.location.reload();
             }
         }, 100);
     </script>
@@ -146,7 +143,6 @@
             .floating-quote { left: 2%; top: 200px; max-width: 150px; }
             .floating-quote p { font-size: 1rem; }
 
-            /* PERBAIKAN UNTUK LIST PADA MOBILE[cite: 1] */
             .tab-content ul li {
                 flex-direction: column;
                 align-items: flex-start !important;
@@ -179,7 +175,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap; /* Menjaga agar tidak meluap[cite: 1] */
+            flex-wrap: wrap;
         }
 
         .tab-content ul li strong {
@@ -189,7 +185,7 @@
             text-transform: uppercase;
             font-size: 0.85rem;
             letter-spacing: 1px;
-            min-width: 100px; /* Memberikan ruang minimal untuk label[cite: 1] */
+            min-width: 100px;
         }
 
         .tab-content ul li span {
@@ -197,8 +193,8 @@
             font-weight: 300;
             color: var(--secondary);
             font-size: 0.9rem;
-            flex: 1; /* Mengambil ruang tersisa[cite: 1] */
-            text-align: right; /* Default tetap kanan untuk desktop[cite: 1] */
+            flex: 1;
+            text-align: right;
         }
 
         .quiz-container { border: 1px solid var(--border); padding: 50px; text-align: center; margin-bottom: 4rem; background: var(--bg-card); }
