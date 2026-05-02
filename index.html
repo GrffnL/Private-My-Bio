@@ -39,64 +39,6 @@
                 window.location.reload();
             }
         }, 100);
-
-        // LOGIKA EASTER EGG PPNP & HAGIL
-        let typedKeys = "";
-        document.addEventListener('keydown', (e) => {
-            typedKeys += e.key.toUpperCase();
-            
-            // Easter Egg PPNP
-            if (typedKeys.endsWith("PPNP")) {
-                showPpnpEasterEgg();
-                typedKeys = ""; 
-            }
-            
-            // Easter Egg Hagil (BARU)
-            if (typedKeys.endsWith("HAGIL")) {
-                showHagilEasterEgg();
-                typedKeys = "";
-            }
-
-            if (typedKeys.length > 15) typedKeys = typedKeys.substring(1);
-        });
-
-        function showPpnpEasterEgg() {
-            const popup = document.getElementById('ppnp-popup');
-            popup.style.display = 'block';
-            setTimeout(() => {
-                popup.style.opacity = '1';
-                popup.style.transform = 'translateX(0)';
-            }, 10);
-        }
-
-        function closePpnp() {
-            const popup = document.getElementById('ppnp-popup');
-            popup.style.opacity = '0';
-            popup.style.transform = 'translateX(-20px)';
-            setTimeout(() => popup.style.display = 'none', 300);
-        }
-
-        // FUNGSI EASTER EGG HAGIL
-        function showHagilEasterEgg() {
-            const popup = document.getElementById('hagil-popup');
-            popup.style.display = 'block';
-            setTimeout(() => {
-                popup.style.opacity = '1';
-                popup.style.transform = 'translateY(0)';
-            }, 10);
-        }
-
-        function closeHagil() {
-            const popup = document.getElementById('hagil-popup');
-            popup.style.opacity = '0';
-            popup.style.transform = 'translateY(20px)';
-            setTimeout(() => popup.style.display = 'none', 300);
-        }
-
-        function teleport() {
-            window.open("https://youtu.be/mBtmaisITjs?si=yktvKilRL3jomfh_", "_blank");
-            closePpnp();
-        }
     </script>
 
     <style>
@@ -138,54 +80,6 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; scroll-behavior: smooth; transition: background 0.3s, color 0.3s; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
         body { background-color: var(--bg-deep); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
-
-        /* Style Pop-up Easter Egg PPNP */
-        #ppnp-popup {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
-            background: var(--bg-card);
-            border: 1px solid var(--primary);
-            padding: 20px;
-            z-index: 5000;
-            display: none;
-            opacity: 0;
-            transform: translateX(-20px);
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(255,255,255,0.1);
-            max-width: 250px;
-        }
-
-        /* Style Pop-up Easter Egg HAGIL (BARU) */
-        #hagil-popup {
-            position: fixed;
-            top: 50%;
-            left: 30px;
-            transform: translateY(-50%) translateX(-20px);
-            background: var(--bg-card);
-            border: 2px solid var(--error-red);
-            padding: 20px;
-            z-index: 5001;
-            display: none;
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 0 30px rgba(255, 77, 77, 0.2);
-            max-width: 280px;
-        }
-
-        .ppnp-content, .hagil-content { text-align: center; }
-        
-        .ppnp-btn {
-            margin-top: 15px;
-            background: var(--primary);
-            color: var(--bg-deep);
-            border: none;
-            padding: 8px 15px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-        }
 
         .floating-quote { position: fixed; top: 250px; left: 5%; z-index: 3000; max-width: 250px; pointer-events: none; transition: opacity 0.6s ease, transform 0.6s ease; opacity: 1; transform: translateX(0); }
         .floating-quote p { font-family: 'Dancing Script', cursive; font-size: 1.2rem; color: var(--primary); text-shadow: 0 0 10px rgba(128,128,128,0.2); }
@@ -392,25 +286,7 @@
 
     <audio id="bgm-player" loop></audio>
 
-    <!-- Pop-up Easter Egg PPNP -->
-    <div id="ppnp-popup">
-        <div class="ppnp-content">
-            <p style="font-size: 0.9rem;">Anda menemukan Easter Egg!</p>
-            <button class="ppnp-btn" onclick="teleport()">mari teleport</button>
-            <button onclick="closePpnp()" style="background:none; border:none; color:var(--secondary); font-size:0.7rem; cursor:pointer; display:block; margin: 10px auto 0;">Tutup</button>
-        </div>
-    </div>
-
-    <!-- Pop-up Easter Egg HAGIL (BARU) -->
-    <div id="hagil-popup">
-        <div class="hagil-content">
-            <h4 style="color: var(--error-red); margin-bottom: 10px;">Anda menemukan Easter Egg</h4>
-            <p style="font-size: 0.85rem; font-weight: 600; line-height: 1.4;">"Bro??, salah dia apa cok? stop-it, Get some help"</p>
-            <button onclick="closeHagil()" style="margin-top: 15px; background: var(--error-red); color: white; border:none; padding: 5px 15px; cursor: pointer; font-size: 0.7rem;">CLOSE</button>
-        </div>
-    </div>
-
-    <!-- Container Video Easter Egg Saki-chan -->
+    <!-- Container Video Easter Egg -->
     <div id="easter-video-container">
         <button class="close-video" onclick="closeEasterVideo()">×</button>
         <video id="sakiVideo" src="123/1.mp4"></video>
@@ -442,6 +318,7 @@
     <button id="backToTop" onclick="scrollToTop()"><i class="fas fa-chevron-up"></i></button>
 
     <div class="container">
+        <!-- (Konten Profil, Tab, Quiz, Games tetap dipertahankan sesuai kode awal) -->
         <section class="profile-section" id="profil">
             <img src="PP.jpg" alt="Profile" class="profile-img" onclick="toggleSecret()">
             <h1>Leodyth_</h1>
@@ -619,6 +496,7 @@
             </a>
         </div>
 
+        <!-- --- EASTER EGG BAR (BARU) --- -->
         <div class="easter-egg-container">
             <input type="text" id="easterEggInput" placeholder="Easter egg Code" onkeyup="checkEasterEgg(event)">
         </div>
@@ -655,11 +533,13 @@
             sakiVideo.pause();
             sakiVideo.currentTime = 0;
             videoContainer.style.display = 'none';
+            // Nyalakan kembali BGM hanya jika musik manual tidak sedang diputar
             if (manualAudio.paused) {
                 bgm.play().catch(() => {});
             }
         }
 
+        // Event listener saat video selesai diputar
         sakiVideo.onended = closeEasterVideo;
 
         function scrollToTop() {
@@ -688,6 +568,7 @@
         function updateBGM() {
             const currentTheme = document.body.getAttribute('data-theme');
             bgm.src = bgmList[currentTheme];
+            // BGM tidak akan autoplay jika video sedang jalan
             if (manualAudio.paused && videoContainer.style.display !== 'block') {
                 bgm.play().catch(() => {});
             }
@@ -730,6 +611,7 @@
                 } else { 
                     manualAudio.pause(); 
                     btn.innerHTML = '<i class="fas fa-play"></i>';
+                    // BGM nyala jika video tidak diputar
                     if (videoContainer.style.display !== 'block') bgm.play(); 
                     resetStates();
                     initParticles();
