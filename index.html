@@ -318,7 +318,6 @@
     <button id="backToTop" onclick="scrollToTop()"><i class="fas fa-chevron-up"></i></button>
 
     <div class="container">
-        <!-- (Konten Profil, Tab, Quiz, Games tetap dipertahankan sesuai kode awal) -->
         <section class="profile-section" id="profil">
             <img src="PP.jpg" alt="Profile" class="profile-img" onclick="toggleSecret()">
             <h1>Leodyth_</h1>
@@ -496,7 +495,7 @@
             </a>
         </div>
 
-        <!-- --- EASTER EGG BAR (BARU) --- -->
+        <!-- --- EASTER EGG BAR --- -->
         <div class="easter-egg-container">
             <input type="text" id="easterEggInput" placeholder="Easter egg Code" onkeyup="checkEasterEgg(event)">
         </div>
@@ -518,14 +517,22 @@
             else backToTop.style.display = 'none';
         });
 
-        /* LOGIKA EASTER EGG SAKI-CHAN */
+        /* LOGIKA EASTER EGG GABUNGAN */
         function checkEasterEgg(event) {
-            const val = event.target.value;
-            if (val.toLowerCase() === "saki-chan") {
+            const val = event.target.value.toLowerCase();
+            
+            // 1. Easter Egg PPNP (Pindah Link)
+            if (val === "ppnp") {
+                window.location.href = "https://youtu.be/mBtmaisITjs?si=yktvKilRL3jomfh_";
+                event.target.value = "";
+            } 
+            
+            // 2. Easter Egg Saki-Chan (Lama)
+            if (val === "saki-chan") {
                 videoContainer.style.display = 'block';
                 sakiVideo.play();
-                bgm.pause(); // Matikan BGM Latar
-                event.target.value = ""; // Reset input
+                bgm.pause(); 
+                event.target.value = ""; 
             }
         }
 
@@ -533,13 +540,11 @@
             sakiVideo.pause();
             sakiVideo.currentTime = 0;
             videoContainer.style.display = 'none';
-            // Nyalakan kembali BGM hanya jika musik manual tidak sedang diputar
             if (manualAudio.paused) {
                 bgm.play().catch(() => {});
             }
         }
 
-        // Event listener saat video selesai diputar
         sakiVideo.onended = closeEasterVideo;
 
         function scrollToTop() {
@@ -568,7 +573,6 @@
         function updateBGM() {
             const currentTheme = document.body.getAttribute('data-theme');
             bgm.src = bgmList[currentTheme];
-            // BGM tidak akan autoplay jika video sedang jalan
             if (manualAudio.paused && videoContainer.style.display !== 'block') {
                 bgm.play().catch(() => {});
             }
@@ -611,7 +615,6 @@
                 } else { 
                     manualAudio.pause(); 
                     btn.innerHTML = '<i class="fas fa-play"></i>';
-                    // BGM nyala jika video tidak diputar
                     if (videoContainer.style.display !== 'block') bgm.play(); 
                     resetStates();
                     initParticles();
