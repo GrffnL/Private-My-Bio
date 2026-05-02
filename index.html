@@ -40,16 +40,24 @@
             }
         }, 100);
 
-        // LOGIKA EASTER EGG PPNP
+        // LOGIKA EASTER EGG PPNP & HAGIL
         let typedKeys = "";
         document.addEventListener('keydown', (e) => {
             typedKeys += e.key.toUpperCase();
+            
+            // Easter Egg PPNP
             if (typedKeys.endsWith("PPNP")) {
                 showPpnpEasterEgg();
-                typedKeys = ""; // Reset setelah berhasil
+                typedKeys = ""; 
             }
-            // Batasi panjang string agar tidak membebani memori
-            if (typedKeys.length > 10) typedKeys = typedKeys.substring(1);
+            
+            // Easter Egg Hagil (BARU)
+            if (typedKeys.endsWith("HAGIL")) {
+                showHagilEasterEgg();
+                typedKeys = "";
+            }
+
+            if (typedKeys.length > 15) typedKeys = typedKeys.substring(1);
         });
 
         function showPpnpEasterEgg() {
@@ -65,6 +73,23 @@
             const popup = document.getElementById('ppnp-popup');
             popup.style.opacity = '0';
             popup.style.transform = 'translateX(-20px)';
+            setTimeout(() => popup.style.display = 'none', 300);
+        }
+
+        // FUNGSI EASTER EGG HAGIL
+        function showHagilEasterEgg() {
+            const popup = document.getElementById('hagil-popup');
+            popup.style.display = 'block';
+            setTimeout(() => {
+                popup.style.opacity = '1';
+                popup.style.transform = 'translateY(0)';
+            }, 10);
+        }
+
+        function closeHagil() {
+            const popup = document.getElementById('hagil-popup');
+            popup.style.opacity = '0';
+            popup.style.transform = 'translateY(20px)';
             setTimeout(() => popup.style.display = 'none', 300);
         }
 
@@ -130,7 +155,26 @@
             box-shadow: 0 0 20px rgba(255,255,255,0.1);
             max-width: 250px;
         }
-        .ppnp-content { text-align: center; }
+
+        /* Style Pop-up Easter Egg HAGIL (BARU) */
+        #hagil-popup {
+            position: fixed;
+            top: 50%;
+            left: 30px;
+            transform: translateY(-50%) translateX(-20px);
+            background: var(--bg-card);
+            border: 2px solid var(--error-red);
+            padding: 20px;
+            z-index: 5001;
+            display: none;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 30px rgba(255, 77, 77, 0.2);
+            max-width: 280px;
+        }
+
+        .ppnp-content, .hagil-content { text-align: center; }
+        
         .ppnp-btn {
             margin-top: 15px;
             background: var(--primary);
@@ -348,12 +392,21 @@
 
     <audio id="bgm-player" loop></audio>
 
-    <!-- Pop-up Easter Egg PPNP (BARU) -->
+    <!-- Pop-up Easter Egg PPNP -->
     <div id="ppnp-popup">
         <div class="ppnp-content">
             <p style="font-size: 0.9rem;">Anda menemukan Easter Egg!</p>
             <button class="ppnp-btn" onclick="teleport()">mari teleport</button>
             <button onclick="closePpnp()" style="background:none; border:none; color:var(--secondary); font-size:0.7rem; cursor:pointer; display:block; margin: 10px auto 0;">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Pop-up Easter Egg HAGIL (BARU) -->
+    <div id="hagil-popup">
+        <div class="hagil-content">
+            <h4 style="color: var(--error-red); margin-bottom: 10px;">Anda menemukan Easter Egg</h4>
+            <p style="font-size: 0.85rem; font-weight: 600; line-height: 1.4;">"Bro??, salah dia apa cok? stop-it, Get some help"</p>
+            <button onclick="closeHagil()" style="margin-top: 15px; background: var(--error-red); color: white; border:none; padding: 5px 15px; cursor: pointer; font-size: 0.7rem;">CLOSE</button>
         </div>
     </div>
 
